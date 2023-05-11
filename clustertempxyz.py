@@ -15,16 +15,22 @@ import sklearn.metrics as skmet
 
 def read_df(fname):
     """
-    Function to read the csv file into a dataframe and do some cleaning.
+    Function to read the csv file into a dataframe and create a transposed
+    dataframe also. Returns both the dataframes after some cleaning.
     Takes the filename as the parameter.
     """
     # read file into a dataframe
-    df0 = pd.read_csv(fname, on_bad_lines='skip', skiprows=4)
+    df10 = pd.read_csv(fname, on_bad_lines='skip', skiprows=4)
     # some cleaning
-    df0.drop(columns=["Country Code"], axis=1, inplace=True)
-    df1 = df0.sort_index().fillna(0)
+    df10.drop(columns=["Country Code"], axis=1, inplace=True)
+    df1 = df10.sort_index().fillna(0)
+    # transposing and cleaning
+    df20 = df1.drop(columns=["Indicator Name", "Indicator Code"])
+    df20.set_index("Country Name")
+    df21 = df20.T
+    df2 = df21.T.set_index("Country Name").T
 
-    return df1
+    return df1, df2
 
 
 def findsilhouette(df):
@@ -46,15 +52,18 @@ def findsilhouette(df):
         cen = kmeans.cluster_centers_
         # calculate the silhoutte score
         print(ncluster, skmet.silhouette_score(df_cluster, labels))
-        
+
     return
 
+
 # calling the functions
-df_arableland_0 = read_df("API_AG.LND.ARBL.ZS_DS2_en_csv_v2_5362201.csv")
-df_AFFV_0 = read_df("API_NV.AGR.TOTL.ZS_DS2_en_csv_v2_5359510.csv")
+a, b = read_df("API_AG.LND.ARBL.ZS_DS2_en_csv_v2_5362201.csv")
+df_arableland_0, df_arableland_0T = a, b
+c, d = read_df("API_NV.AGR.TOTL.ZS_DS2_en_csv_v2_5359510.csv")
+df_AFFV_0, df_AFFV_0T = c, d
 
 # extracting the columns we want for clustering and
-# making copies of those dataframes 
+# making copies of those dataframes
 df_arableland = df_arableland_0.loc[:, ["Country Name", "2010"]].copy()
 df_AFFV = df_AFFV_0.loc[:, ["Country Name", "2010"]].copy()
 
@@ -112,9 +121,9 @@ xcen_0 = cen_0[:, 0]
 ycen_0 = cen_0[:, 1]
 # cluster by cluster
 plt.figure(figsize=(6, 6))
-plt.scatter(df_cluster["Arable Land"], df_cluster["AFFV"], 10,
+plt.scatter(df_cluster["Arable Land"], df_cluster["AFFV"], 12,
             labels, marker="o", cmap=colors)
-plt.scatter(xcen_0, ycen_0, 45, "k", marker="d")
+plt.scatter(xcen_0, ycen_0, 50, "k", marker="d")
 plt.xlabel("Arable land")
 plt.ylabel("AFFV")
 plt.legend(handles=plt.scatter(df_cluster_norm["Arable Land"],
