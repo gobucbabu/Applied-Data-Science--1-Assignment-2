@@ -14,6 +14,7 @@ import sklearn.cluster as cluster
 import sklearn.metrics as skmet
 import scipy.optimize as opt
 import errors as err
+import seaborn as sns
 
 def read_df(fname):
     """
@@ -80,6 +81,10 @@ def logistic(t, a, b, c):
     return k
 
 
+# setting the style
+sns.set_style("darkgrid")
+
+
 # calling the functions
 a, b = read_df("API_AG.LND.ARBL.ZS_DS2_en_csv_v2_5362201.csv")
 df_arableland_0, df_arableland_0T = a, b
@@ -144,7 +149,7 @@ plt.legend(handles=plt.scatter(df_cluster_norm["Arable Land"],
                                marker="o", cmap=colors).legend_elements()[0],
            labels=range(1, kmeans.n_clusters+1))
 plt.title("Clusters of Countries in 2010", fontweight='bold')
-plt.savefig("Cluster of Countries in 2010.png", dpi=250)
+plt.savefig("Cluster of Countries in 2010.png", dpi=250, bbox_inches='tight')
 plt.show()
 
 # move the cluster centres to the original scale
@@ -191,7 +196,7 @@ plt.title("Fitted data", fontweight='bold')
 plt.xlabel("Years")
 plt.ylabel("Agriculture, forestry, and fishing, \n value  added (% of GDP)")
 plt.legend(["Exponential fitting", "Logarithmic fitting", "China's data"])
-plt.savefig("Fitted datas.png", dpi=250)
+plt.savefig("Fitted datas.png", dpi=250, bbox_inches='tight')
 plt.show()
 
 # forecast using logistic fitting for prediction
@@ -204,7 +209,7 @@ plt.xlabel("Years")
 plt.ylabel("Agriculture, forestry, and fishing, \n value  added (% of GDP)")
 plt.legend(["China's data", "Forecasted graph"])
 plt.legend()
-plt.savefig("Prediction.png", dpi=250)
+plt.savefig("Prediction.png", dpi=250, bbox_inches='tight')
 plt.show()
 
 # found sigma values I found using bootstrap resampling cause
